@@ -1,0 +1,21 @@
+{
+  "name": "shopping-hub",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "janhvi",
+    "microservice"
+  ],
+  "license": "ISC",
+  "author": "Janhvi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev:server": "npm --prefix backend run dev",
+    "dev:client": "npm --prefix frontend run dev",
+    "dev": "node dev.js"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

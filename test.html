@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopnest API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        button:hover { background: #0056b3; }
+        .response {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 12px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛍️ Shopnest API Test</h1>
+
+        <!-- Register Section -->
+        <div class="section">
+            <h2>Register User</h2>
+            <input type="text" id="regName" placeholder="Name" value="Admin User">
+            <input type="email" id="regEmail" placeholder="Email" value="admin@shopnest.com">
+            <input type="password" id="regPassword" placeholder="Password" value="Admin@123">
+            <select id="regRole">
+                <option value="user">User</option>
+                <option value="admin" selected>Admin</option>
+            </select>
+            <button onclick="register()">Register</button>
+            <div id="registerResponse"></div>
+        </div>
+
+        <!-- Login Section -->
+        <div class="section">
+            <h2>Login User</h2>
+            <input type="email" id="loginEmail" placeholder="Email" value="admin@shopnest.com">
+            <input type="password" id="loginPassword" placeholder="Password" value="Admin@123">
+            <button onclick="login()">Login</button>
+            <div id="loginResponse"></div>
+        </div>
+
+        <!-- Get Users Section -->
+        <div class="section">
+            <h2>Get Users (Admin Only)</h2>
+            <input type="text" id="token" placeholder="Paste token here">
+            <button onclick="getUsers()">Get Users</button>
+            <div id="usersResponse"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/auth';
+
+        async function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await response.json();
+                
+                // Auto-fill token if registration successful
+                if (data.token) {
+                    document.getElementById('token').value = data.token;
+                }
+                
+                document.getElementById('registerResponse').innerHTML = 
+                    `<div class="response ${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('registerResponse').innerHTML = 
+                    `<div class="response error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                
+                // Auto-fill token if login successful
+                if (data.token) {
+                    document.getElementById('token').value = data.token;
+                }
+                
+                document.getElementById('loginResponse').innerHTML = 
+                    `<div class="response ${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('loginResponse').innerHTML = 
+                    `<div class="response error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function getUsers() {
+            const token = document.getElementById('token').value;
+            if (!token) {
+                document.getElementById('usersResponse').innerHTML = 
+                    `<div class="response error">Error: Token is required. Please login first.</div>`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/user`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                document.getElementById('usersResponse').innerHTML = 
+                    `<div class="response ${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('usersResponse').innerHTML = 
+                    `<div class="response error">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
