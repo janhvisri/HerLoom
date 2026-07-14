@@ -252,7 +252,16 @@ const AdminProducts = () => {
       {/* Creation / Update Modal Overlay */}
       {modalOpen && (
         <div className="modal-backdrop">
-          <div className="modal-content" style={{ maxWidth: "550px", width: "95%" }}>
+         <div
+  className="modal-content"
+  style={{
+    maxWidth: "550px",
+    width: "95%",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    padding: "24px",
+  }}
+>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-color)", paddingBottom: "15px", marginBottom: "20px" }}>
               <h2 style={{ fontSize: "20px", fontWeight: "800" }}>
                 {editMode ? "Modify Product Details" : "Create New Product"}
@@ -300,7 +309,14 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
+             <div
+  className="form-grid"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "15px",
+  }}
+>
                 <div className="form-group">
                   <label className="form-label" htmlFor="product-price">Price (₹)</label>
                   <input
